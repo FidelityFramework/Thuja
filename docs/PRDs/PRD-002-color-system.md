@@ -1,7 +1,7 @@
 # PRD-002: Color System and Terminal Capability Detection
 
 **Status:** Draft
-**Tier:** 0 — Foundation
+**Tier:** 0, Foundation
 **Dependencies:** None (parallel with PRD-000, PRD-001)
 **Unlocks:** PRD-010, PRD-012, all widget rendering with reliable color output
 
@@ -100,7 +100,7 @@ module ColorResolver =
         | Rgb (r, g, b), Basic -> ResolvedAnsi (rgbTo8 r g b)
         | Hex hex, depth -> resolve depth (parseHex hex)
 
-    /// The output of color resolution — ready for terminal encoding.
+    /// The output of color resolution, ready for terminal encoding.
     type ResolvedColor =
         | ResolvedDefault
         | ResolvedAnsi of byte
@@ -202,7 +202,7 @@ The backend resolves colors at command execution time:
 let resolvedStyle = Style.resolve profile.ColorDepth style
 ```
 
-This keeps all color resolution at the boundary (backend), not in element code. Elements freely use `Rgb`, `Named`, `Hex` — the backend downgrades as needed.
+This keeps all color resolution at the boundary (backend), not in element code. Elements freely use `Rgb`, `Named`, `Hex`, and the backend downgrades as needed.
 
 ### Style Resolution
 
@@ -228,7 +228,7 @@ The `TerminalProfile` should be re-queried on significant events, not cached for
 ### For Users
 
 ```fsharp
-// Named colors work everywhere — auto-downgrade to terminal capability
+// Named colors work everywhere -- auto-downgrade to terminal capability
 text [ Color (Named Red) ] "Error message"
 text [ Color (Rgb (255, 128, 0)) ] "Orange works on TrueColor, nearest-match elsewhere"
 text [ Color (Hex "#FF8000") ] "Same orange via hex"
@@ -242,7 +242,7 @@ let info = Named Cyan
 ### For Backend Implementors
 
 ```fsharp
-// Backend receives resolved colors — no need to handle downgrading
+// Backend receives resolved colors -- no need to handle downgrading
 type IBackend =
     abstract Profile: TerminalProfile
     abstract Execute: Command list -> unit
@@ -251,9 +251,9 @@ type IBackend =
 
 ## 7. .NET-Free Design Notes
 
-- `TerminalCapability.detectColorDepth` takes `getEnv: string -> string option` — no `System.Environment` dependency. The caller provides environment access.
-- Color palettes are compile-time data arrays — no file IO, no resource loading
-- Distance calculations are pure arithmetic — no `System.Math` needed (just float ops)
+- `TerminalCapability.detectColorDepth` takes `getEnv: string -> string option` with no `System.Environment` dependency. The caller provides environment access.
+- Color palettes are compile-time data arrays with no file IO or resource loading
+- Distance calculations are pure arithmetic with no `System.Math` needed (just float ops)
 - `ColorName`, `ColorDepth`, `Color` are all plain DUs
 - `TerminalProfile` is a plain record
 - No `System.Drawing.Color`, no `System.ConsoleColor`

@@ -1,7 +1,7 @@
 # PRD-001: Segment Model
 
 **Status:** Draft
-**Tier:** 0 — Foundation
+**Tier:** 0, Foundation
 **Dependencies:** None (parallel with PRD-000)
 **Unlocks:** PRD-010, PRD-012, PRD-013, PRD-020, PRD-024, and all complex widget rendering
 
@@ -9,14 +9,14 @@
 
 ## 1. Problem Statement
 
-Thuja's current rendering pipeline produces `Command list` values — low-level positioned instructions (`MoveTo`, `Print`, `PrintWith`). Each element independently computes absolute cursor positions and styled strings. This works for simple elements but creates problems:
+Thuja's current rendering pipeline produces `Command list` values, which are low-level positioned instructions (`MoveTo`, `Print`, `PrintWith`). Each element independently computes absolute cursor positions and styled strings. This works for simple elements but creates problems:
 
 - **No composition:** A Table cannot render a cell containing a Panel containing styled Text without each layer knowing about absolute coordinates
 - **No splitting:** There's no way to take a stream of rendered content and divide it at column boundaries (needed for tables, multi-column layouts)
 - **No post-processing:** You can't apply a style overlay, crop, pad, or align rendered content after the fact
 - **String manipulation is fragile:** Elements do raw string truncation/padding, which breaks with wide characters (CJK, emoji) that occupy 2 terminal cells
 
-Rich and Spectre.Console solve this with a `Segment` abstraction — an intermediate representation between elements and terminal commands that supports composition operations.
+Rich and Spectre.Console solve this with a `Segment` abstraction: an intermediate representation between elements and terminal commands that supports composition operations.
 
 ## 2. Reference Analysis
 
@@ -30,20 +30,20 @@ class Segment(NamedTuple):
 ```
 
 Key composition operations (all operate on segment iterables):
-- `split_lines()` — flat stream to `List[List[Segment]]` by newlines
-- `split_and_crop_lines(length)` — split + pad/crop each line to exact cell width
-- `adjust_line_length(line, length)` — pad or crop a single line
-- `divide(cuts)` — split stream at column positions (Table column layout)
-- `apply_style(segments, style)` — layer additional styling onto segments
-- `simplify(segments)` — merge adjacent same-style segments
-- `set_shape(lines, width, height)` — create fixed rectangular grid
-- `align_top/middle/bottom(lines, width, height)` — vertical alignment
+- `split_lines()`: flat stream to `List[List[Segment]]` by newlines
+- `split_and_crop_lines(length)`: split + pad/crop each line to exact cell width
+- `adjust_line_length(line, length)`: pad or crop a single line
+- `divide(cuts)`: split stream at column positions (Table column layout)
+- `apply_style(segments, style)`: layer additional styling onto segments
+- `simplify(segments)`: merge adjacent same-style segments
+- `set_shape(lines, width, height)`: create fixed rectangular grid
+- `align_top/middle/bottom(lines, width, height)`: vertical alignment
 
 The `divide()` operation is particularly important: it takes a line of segments and a list of column positions, and splits the segments at those positions, correctly handling multi-cell characters.
 
 ### Spectre.Console (C#)
 
-Nearly identical model — `Segment` class with text, style, control flag. Same composition pattern. Adds `CellCount()` for wide character awareness.
+Nearly identical model. The `Segment` class carries text, style, and a control flag. Same composition pattern. Adds `CellCount()` for wide character awareness.
 
 ### Thuja (Current)
 
@@ -55,7 +55,7 @@ type Command =
     | PrintWith of style: Style * content: string
 ```
 
-This is the *output* of what segments would produce — positioned, styled writes. The problem is there's no intermediate layer where composition can happen.
+This is the *output* of what segments would produce: positioned, styled writes. The problem is there is no intermediate layer where composition can happen.
 
 ## 3. F# Native Design
 
@@ -223,7 +223,7 @@ module Lines =
 
 ### Migration Path
 
-Existing elements continue to work via `IElement.Render`. New and updated elements implement `ISegmentRenderable` for composability. Container elements (Table, Panel, Layout) are the primary consumers — they render children as segments, compose, then convert to commands.
+Existing elements continue to work via `IElement.Render`. New and updated elements implement `ISegmentRenderable` for composability. Container elements (Table, Panel, Layout) are the primary consumers: they render children as segments, compose, then convert to commands.
 
 ## 5. Responsive Behavior
 
@@ -235,7 +235,7 @@ Segments decouple content generation from spatial positioning. When a terminal r
 4. `Line.divide` re-splits table columns for new widths
 5. Content reflows naturally because segments are width-independent until shaped
 
-The segment model makes responsive behavior automatic for any element that produces segments — the shaping operations handle the adaptation.
+The segment model makes responsive behavior automatic for any element that produces segments. The shaping operations handle the adaptation.
 
 ## 6. API Surface
 
@@ -271,12 +271,12 @@ let renderRow (columnWidths: int list) (cells: Segment list list) =
 
 ## 7. .NET-Free Design Notes
 
-- `Segment` is a struct DU — pure F#, no heap allocation for simple cases
-- `ControlCode` is a plain DU — no System.Console dependency
-- `CellWidth` module is pure computation over characters — the Unicode width table is data, not a BCL call (replaces any dependency on `System.Globalization`)
+- `Segment` is a struct DU, pure F# with no heap allocation for simple cases
+- `ControlCode` is a plain DU with no System.Console dependency
+- `CellWidth` module is pure computation over characters. The Unicode width table is data, not a BCL call (replaces any dependency on `System.Globalization`)
 - All composition functions are pure `list -> list` transforms
 - No IO, no threading, no mutable state
-- The `Lines.toCommands` bridge produces Thuja's existing `Command` type, which the backend translates to actual terminal writes — the segment layer never touches IO
+- The `Lines.toCommands` bridge produces Thuja's existing `Command` type, which the backend translates to actual terminal writes. The segment layer never touches IO
 
 ### CellWidth Implementation Note
 
@@ -284,7 +284,7 @@ The `CellWidth.measure` function needs Unicode East Asian Width data. This shoul
 - A compile-time lookup table generated from Unicode EAW data
 - Pure function: `char -> int` (or `Rune -> int` for full Unicode)
 - No dependency on `System.Globalization.StringInfo` or similar BCL types
-- The table is ~200 range entries — trivial to embed as F# match expressions
+- The table is ~200 range entries, trivial to embed as F# match expressions
 
 ## 8. Acceptance Criteria
 

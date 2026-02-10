@@ -1,7 +1,7 @@
 # PRD-013: Progress System
 
 **Status:** Draft
-**Tier:** 1 — Core Capability
+**Tier:** 1, Core Capability
 **Dependencies:** PRD-000 (Measure), PRD-001 (Segment), PRD-010 (Markup), PRD-012 (Live Rendering)
 **Unlocks:** Polished CLI tools, AI inference displays, batch processing UIs
 
@@ -15,7 +15,7 @@ Progress bars are the signature widget of Rich and the primary visual element in
 - Smooth animation via the live rendering system
 - Multiple concurrent tasks with independent progress
 - Determinate (known total) and indeterminate (pulsing) modes
-- Responsive resizing — the bar fills available space, other columns are fixed-width
+- Responsive resizing: the bar fills available space, other columns are fixed-width
 
 ## 2. Reference Analysis
 
@@ -32,14 +32,14 @@ Progress (context manager)
 ```
 
 **Composable columns:**
-- `TextColumn` — task description
-- `BarColumn` — the actual progress bar (filled/empty blocks)
-- `SpinnerColumn` — animated spinner
-- `PercentageColumn` — "42.0%"
-- `TimeElapsedColumn` — "0:01:23"
-- `TimeRemainingColumn` — "0:00:45" (estimated)
-- `DownloadColumn` — "1.2/5.0 GB"
-- `TransferSpeedColumn` — "2.3 MB/s"
+- `TextColumn`: task description
+- `BarColumn`: the actual progress bar (filled/empty blocks)
+- `SpinnerColumn`: animated spinner
+- `PercentageColumn`: "42.0%"
+- `TimeElapsedColumn`: "0:01:23"
+- `TimeRemainingColumn`: "0:00:45" (estimated)
+- `DownloadColumn`: "1.2/5.0 GB"
+- `TransferSpeedColumn`: "2.3 MB/s"
 
 **Task model:**
 - `task.completed` / `task.total` for progress ratio
@@ -258,7 +258,7 @@ let view model =
 
 ## 5. Responsive Behavior
 
-- The `bar` column has `Maximum = 1000` (effectively unbounded) — it absorbs all remaining space after fixed-width columns are allocated
+- The `bar` column has `Maximum = 1000` (effectively unbounded). It absorbs all remaining space after fixed-width columns are allocated
 - On narrow terminals, the bar shrinks toward its minimum (10)
 - If extremely narrow, fixed columns (percentage, time) can be hidden via `HiddenBelow` visibility on their layout slots
 - Task descriptions truncate with ellipsis
@@ -290,13 +290,13 @@ progressView [
 
 ## 7. .NET-Free Design Notes
 
-- `ProgressTask` is a plain F# record — no mutable state, no timers
-- `ProgressColumn` is a record of pure functions — no side effects
-- Speed calculation uses a sliding window of `(elapsed, completed)` pairs — pure math
+- `ProgressTask` is a plain F# record with no mutable state and no timers
+- `ProgressColumn` is a record of pure functions with no side effects
+- Speed calculation uses a sliding window of `(elapsed, completed)` pairs, all pure math
 - ETA calculation is pure arithmetic from speed and remaining amount
-- The rendering functions are all `task -> elapsed -> width -> StyledText` — pure
-- No `System.Diagnostics.Stopwatch`, no `DateTime` — elapsed time comes from the animation clock (PRD-012), which is injected via the Elm message system
-- Time formatting is pure integer arithmetic (div, mod) — no `TimeSpan`
+- The rendering functions are all `task -> elapsed -> width -> StyledText`, purely functional
+- No `System.Diagnostics.Stopwatch` and no `DateTime`. Elapsed time comes from the animation clock (PRD-012), which is injected via the Elm message system
+- Time formatting is pure integer arithmetic (div, mod) with no `TimeSpan`
 
 ## 8. Acceptance Criteria
 

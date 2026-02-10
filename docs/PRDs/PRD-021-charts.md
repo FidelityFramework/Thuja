@@ -1,7 +1,7 @@
 # PRD-021: Chart Widgets (Bar Chart, Breakdown Chart)
 
 **Status:** Draft
-**Tier:** 2 — Widget Catalog
+**Tier:** 2, Widget Catalog
 **Dependencies:** PRD-000 (Measure), PRD-001 (Segment), PRD-002 (Color)
 **Unlocks:** Data visualization in terminal dashboards, monitoring tools, reports
 
@@ -143,8 +143,8 @@ breakdownChart [ ShowPercentage ] [
 
 - `BarItem` and `BreakdownItem` are plain records
 - All calculations are pure arithmetic: `value / max * width`
-- Value formatting is a user-provided function `float -> string` — no `System.Globalization`
-- Color assignment uses the Color type (PRD-002) — resolved at render time
+- Value formatting is a user-provided function `float -> string`, avoiding any `System.Globalization` dependency
+- Color assignment uses the Color type (PRD-002), resolved at render time
 - No `System.Math` beyond basic arithmetic available in F# core
 
 ## 8. Acceptance Criteria

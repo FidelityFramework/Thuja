@@ -1,7 +1,7 @@
 # PRD-025: JSON Syntax Highlighting
 
 **Status:** Draft
-**Tier:** 2 — Widget Catalog
+**Tier:** 2, Widget Catalog
 **Dependencies:** PRD-001 (Segment), PRD-002 (Color)
 **Unlocks:** API response display, config file viewers, data inspection tools
 
@@ -9,21 +9,21 @@
 
 ## 1. Problem Statement
 
-JSON is ubiquitous in developer tools — API responses, configuration files, data inspection. Displaying raw JSON in a terminal is hard to read. Syntax-highlighted JSON with colored keys, strings, numbers, booleans, and structural characters is much more legible. Rich and Spectre.Console both provide JSON syntax highlighting widgets.
+JSON is ubiquitous in developer tools: API responses, configuration files, and data inspection. Displaying raw JSON in a terminal is hard to read. Syntax-highlighted JSON with colored keys, strings, numbers, booleans, and structural characters is much more legible. Rich and Spectre.Console both provide JSON syntax highlighting widgets.
 
 ## 2. Reference Analysis
 
 ### Rich / Spectre.Console
 
 Customizable colors per JSON element type:
-- Braces `{}` — structural
-- Brackets `[]` — structural
-- Keys — distinct from values
-- Strings — quoted values
-- Numbers — numeric literals
-- Booleans — `true`/`false`
-- Null — `null`
-- Colons and commas — punctuation
+- Braces `{}`: structural
+- Brackets `[]`: structural
+- Keys: distinct from values
+- Strings: quoted values
+- Numbers: numeric literals
+- Booleans: `true`/`false`
+- Null: `null`
+- Colons and commas: punctuation
 
 Rich additionally supports pretty-printing with configurable indentation.
 
@@ -47,7 +47,7 @@ type JsonToken =
 
 module JsonTokenizer =
     /// Tokenize a JSON string into typed tokens.
-    /// This is a lexer, not a parser — it doesn't validate JSON structure.
+    /// This is a lexer, not a parser -- it does not validate JSON structure.
     let tokenize (json: string) : JsonToken list = ...
 
     /// Pretty-print (reformat with indentation) then tokenize.
@@ -141,7 +141,7 @@ jsonText [ Compact ] jsonString
 
 ## 7. .NET-Free Design Notes
 
-- JSON tokenizer is hand-written character scanning — no `System.Text.Json`
+- JSON tokenizer is hand-written character scanning, not `System.Text.Json`
 - No JSON parsing/validation (just lexing for coloring)
 - Token types are a plain DU
 - Style map is a record of Style values

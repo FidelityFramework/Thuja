@@ -8,13 +8,13 @@ Build a Rich-level terminal UI framework in idiomatic F# 'native', using Thuja's
 
 1. **Rich (Python) is the primary reference**. Rich has the cleaner protocol design. Spectre.Console is a C# port of Rich with fewer features and more OOP ceremony.
 
-2. **Keep Thuja's superior core** — ViewTree structural diffing, Region-based spatial layout, and Elm MVU are architecturally stronger than Rich's full-redraw model. Build Rich's widget richness on Thuja's foundation.
+2. **Keep Thuja's superior core.** ViewTree structural diffing, Region-based spatial layout, and Elm MVU are architecturally stronger than Rich's full-redraw model. Build Rich's widget richness on Thuja's foundation.
 
-3. **No .NET CLR/BCL assumptions** — all core types are pure F# (DUs, records, modules, functions). No `System.Threading`, `System.Console`, `System.DateTime`, `System.Text.RegularExpressions`, or other BCL dependencies in core code. Runtime-specific behavior (timers, terminal IO, environment access) is injected through abstract interfaces.
+3. **No .NET CLR/BCL assumptions.** All core types are pure F# (DUs, records, modules, functions). No `System.Threading`, `System.Console`, `System.DateTime`, `System.Text.RegularExpressions`, or other BCL dependencies in core code. Runtime-specific behavior (timers, terminal IO, environment access) is injected through abstract interfaces.
 
-4. **Firefly-ready concurrency** — the Elm command/subscription model abstracts concurrency. Timer ticks, async effects, and IO are all expressed as messages. The runtime adapter (currently .NET, eventually Firefly) provides the scheduling.
+4. **Firefly-ready concurrency.** The Elm command/subscription model abstracts concurrency. Timer ticks, async effects, and IO are all expressed as messages. The runtime adapter (currently .NET, eventually Firefly) provides the scheduling.
 
-5. **Responsive-first layout** — tiling window managers (Hyprland/Omarchy) resize terminals aggressively. The Measure protocol and responsive layout system make content adaptation a first-class concern, not an afterthought.
+5. **Responsive-first layout.** Tiling window managers (Hyprland/Omarchy) resize terminals aggressively. The Measure protocol and responsive layout system make content adaptation a first-class concern, not an afterthought.
 
 ## Dependency Graph
 
@@ -44,7 +44,7 @@ Tier 2: Widget Catalog                   │
 
 ## PRD Index
 
-### Tier 0 — Foundation
+### Tier 0: Foundation
 
 | PRD | Title | Status | Summary |
 |-----|-------|--------|---------|
@@ -52,7 +52,7 @@ Tier 2: Widget Catalog                   │
 | [001](PRD-001-segment-model.md) | Segment Model | Draft | Composable intermediate rendering representation |
 | [002](PRD-002-color-system.md) | Color System | Draft | Capability detection and automatic color downgrading |
 
-### Tier 1 — Core Capabilities
+### Tier 1: Core Capabilities
 
 | PRD | Title | Status | Summary |
 |-----|-------|--------|---------|
@@ -62,7 +62,7 @@ Tier 2: Widget Catalog                   │
 | [013](PRD-013-progress-system.md) | Progress System | Draft | Composable progress bars with task tracking |
 | [014](PRD-014-border-expansion.md) | Border Expansion | Draft | 18+ border styles for panels and tables |
 
-### Tier 2 — Widget Catalog
+### Tier 2: Widget Catalog
 
 | PRD | Title | Status | Summary |
 |-----|-------|--------|---------|
@@ -86,4 +86,4 @@ Every PRD follows these rules:
 - **Collections**: F# `list`, `Map`, `Set`, `array`. No `System.Collections.*`.
 - **Concurrency**: Elm commands and subscriptions. No `System.Threading` in core.
 
-The backend (`src/Thuja.Tutu/`) is explicitly the .NET boundary — it uses BCL types to talk to the terminal. When migrating to Fidelity/Firefly, only the backend changes.
+The backend (`src/Thuja.Tutu/`) is explicitly the .NET boundary. It uses BCL types to talk to the terminal. When migrating to Fidelity/Firefly, only the backend changes.

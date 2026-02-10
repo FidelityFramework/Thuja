@@ -1,7 +1,7 @@
 # PRD-024: Markdown Rendering
 
 **Status:** Draft
-**Tier:** 2 — Widget Catalog
+**Tier:** 2, Widget Catalog
 **Dependencies:** PRD-001 (Segment), PRD-010 (Markup), PRD-014 (Borders), PRD-020 (Tree)
 **Unlocks:** Help text display, README rendering, chat message formatting, documentation
 
@@ -9,7 +9,7 @@
 
 ## 1. Problem Statement
 
-Markdown is the lingua franca of developer documentation and AI chat output. Terminal applications frequently need to render Markdown content — help text, chat messages, README display, API response formatting. Rich provides a Markdown renderer that handles headings, code blocks, lists, tables, emphasis, and links. This is particularly relevant for AI terminal experiences where model output is typically Markdown.
+Markdown is the lingua franca of developer documentation and AI chat output. Terminal applications frequently need to render Markdown content: help text, chat messages, README display, and API response formatting. Rich provides a Markdown renderer that handles headings, code blocks, lists, tables, emphasis, and links. This is particularly relevant for AI terminal experiences where model output is typically Markdown.
 
 ## 2. Reference Analysis
 
@@ -74,7 +74,7 @@ module MarkdownParser =
     let parse (input: string) : MdDocument = ...
 ```
 
-The parser is a hand-written recursive descent parser (no external dependency). It handles the CommonMark subset relevant to terminal rendering — not full spec compliance, but sufficient for documentation and AI output.
+The parser is a hand-written recursive descent parser (no external dependency). It handles the CommonMark subset relevant to terminal rendering. The goal is not full spec compliance, but coverage sufficient for documentation and AI output.
 
 ### Renderer
 
@@ -188,10 +188,10 @@ markdown [
 
 ## 7. .NET-Free Design Notes
 
-- Markdown AST types are plain DUs — no external parser dependency
+- Markdown AST types are plain DUs with no external parser dependency
 - Hand-written parser: no `System.Text.RegularExpressions`
 - Renderer composes existing Thuja elements (text, panel, rule, table, rows)
-- No `System.IO` for reading files — user provides Markdown as string
+- No `System.IO` for reading files. The user provides Markdown as a string
 - Syntax highlighting for code blocks is optional and a separate concern (can be added later as a pure tokenizer → styled spans function)
 
 ### Parser Approach

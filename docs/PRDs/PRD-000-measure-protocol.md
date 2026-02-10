@@ -1,7 +1,7 @@
 # PRD-000: Measure Protocol
 
 **Status:** Draft
-**Tier:** 0 — Foundation
+**Tier:** 0, Foundation
 **Dependencies:** None (this is the root dependency)
 **Unlocks:** PRD-001, PRD-011, PRD-013, PRD-020, PRD-021, and all container/layout work
 
@@ -16,7 +16,7 @@ Thuja's current rendering contract is single-phase: elements receive a Region an
 - Panels cannot shrink-wrap their children
 - Responsive behavior on terminal resize is limited to proportional fractions
 
-In tiling window managers like Hyprland, terminal windows are aggressively resized. A TUI framework must negotiate space intelligently — asking children "how small can you go?" and "how large do you want to be?" before committing to allocation. This is the core enabler for responsive terminal layout.
+In tiling window managers like Hyprland, terminal windows are aggressively resized. A TUI framework must negotiate space intelligently, asking children "how small can you go?" and "how large do you want to be?" before committing to allocation. This is the core enabler for responsive terminal layout.
 
 ## 2. Reference Analysis
 
@@ -121,7 +121,7 @@ type IMeasurable =
     abstract Measure: maxWidth: int -> Measurement
 ```
 
-Elements that implement `IMeasurable` participate in intelligent layout. Those that don't are treated as `{ Minimum = 0; Maximum = availableWidth }` — they fill whatever space they're given (same default as Rich).
+Elements that implement `IMeasurable` participate in intelligent layout. Those that don't are treated as `{ Minimum = 0; Maximum = availableWidth }`, filling whatever space they are given (same default as Rich).
 
 ### Why a Separate Interface (Not Part of IElement)
 
@@ -142,7 +142,7 @@ type MeasureContext = {
 }
 ```
 
-This avoids coupling to any runtime-specific type. The context is pure data — no System.Console, no IBackend, no thread-local state.
+This avoids coupling to any runtime-specific type. The context is pure data with no System.Console, no IBackend, and no thread-local state.
 
 ## 4. Integration with Thuja Core
 
@@ -189,7 +189,7 @@ let allocate (props: LayoutProps list) (children: IElement list) (available: int
 
 ### ViewTree Compatibility
 
-Measurement does not change the ViewTree structure. It happens *during* view construction (when Layout elements allocate child regions), before the tree is built. The diffing engine continues to compare rendered ViewTrees — measurement is a layout-time concern, not a render-time concern.
+Measurement does not change the ViewTree structure. It happens *during* view construction (when Layout elements allocate child regions), before the tree is built. The diffing engine continues to compare rendered ViewTrees. Measurement is a layout-time concern, not a render-time concern.
 
 ### Program.fs Integration
 
@@ -212,7 +212,7 @@ Terminal shrinks from 120 to 60 columns (Hyprland splits a window):
 5. Table: minimum=30 (sum of column minimums), maximum=100
 6. Panel: minimum=child.min+2 (borders), maximum=child.max+2
 7. Layout allocates: if total minimums <= 60, distribute surplus proportionally
-8. If total minimums > 60, elements at minimums — content wraps, columns compress
+8. If total minimums > 60, elements sit at minimums; content wraps and columns compress
 
 ### Collapse Behavior
 
@@ -237,7 +237,7 @@ type LayoutProps =
     // Falls through to smallest matching threshold
 ```
 
-This is not in Rich or Spectre.Console — it's a natural extension for the tiling WM use case where terminals regularly cross width thresholds.
+This is not in Rich or Spectre.Console. It is a natural extension for the tiling WM use case where terminals regularly cross width thresholds.
 
 ## 6. API Surface
 
@@ -271,11 +271,11 @@ columns [ Auto; Fraction 1; Absolute 20 ] [
 
 This PRD is fully .NET-free by design:
 
-- `Measurement` is a pure F# struct record — no BCL types
-- `IMeasurable` uses F# abstract members — maps to any runtime's vtable/dispatch
-- `MeasureContext` is a plain record — no System.Console, no IServiceProvider
+- `Measurement` is a pure F# struct record with no BCL types
+- `IMeasurable` uses F# abstract members, mapping to any runtime's vtable/dispatch
+- `MeasureContext` is a plain record with no System.Console or IServiceProvider dependency
 - All functions are pure (input -> output) with no side effects
-- No threading, no async, no IO — measurement is synchronous and deterministic
+- No threading, no async, no IO. Measurement is synchronous and deterministic
 - The only F# language features used are: records, DUs, interfaces, modules, functions
 
 When Firefly replaces the .NET runtime, these types compile unchanged. The measurement phase is pure computation over immutable data.

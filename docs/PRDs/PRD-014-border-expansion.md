@@ -1,7 +1,7 @@
 # PRD-014: Border Style Expansion
 
 **Status:** Draft
-**Tier:** 1 — Core Capability
+**Tier:** 1, Core Capability
 **Dependencies:** None (can be implemented independently)
 **Unlocks:** Visual richness for panels, tables, rules across the entire widget catalog
 
@@ -239,9 +239,9 @@ panel [ Border custom ] [ text [] "Mixed" ]
 ## 7. .NET-Free Design Notes
 
 - `BoxBorder` and `TableBorder` are plain F# records of strings
-- Built-in styles are compile-time constants — no file loading, no resources
+- Built-in styles are compile-time constants. No file loading or resources are required
 - Border rendering is pure string concatenation into Commands
-- No Unicode library dependency — characters are string literals
+- No Unicode library dependency; characters are string literals
 - No `System.Char`, `System.Text` or other BCL types
 
 ## 8. Acceptance Criteria

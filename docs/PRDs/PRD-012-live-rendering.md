@@ -1,7 +1,7 @@
 # PRD-012: Live Rendering and Spinner System
 
 **Status:** Draft
-**Tier:** 1 — Core Capability
+**Tier:** 1, Core Capability
 **Dependencies:** PRD-001 (Segment Model), PRD-002 (Color System)
 **Unlocks:** PRD-013 (Progress System), animated status displays, real-time dashboards
 
@@ -9,13 +9,13 @@
 
 ## 1. Problem Statement
 
-Thuja's Elm loop re-renders on message receipt — it's event-driven. There's no built-in mechanism for time-based animation (spinners, pulsing progress bars, blinking cursors, live-updating clocks) without the user manually creating subscriptions and managing frame timing.
+Thuja's Elm loop re-renders on message receipt. It is event-driven. There's no built-in mechanism for time-based animation (spinners, pulsing progress bars, blinking cursors, live-updating clocks) without the user manually creating subscriptions and managing frame timing.
 
-Rich's most visible feature is its animated output — the spinning dots during AI inference, the filling progress bars, the live-updating status displays. These create the perception of a responsive, polished application. This capability must be native to the framework, not bolted on by each user.
+Rich's most visible feature is its animated output: the spinning dots during AI inference, the filling progress bars, the live-updating status displays. These create the perception of a responsive, polished application. This capability must be native to the framework, not bolted on by each user.
 
 ## 2. Reference Analysis
 
-### Rich (Python) — Live
+### Rich (Python): Live
 
 - Context manager `Live(renderable)` that auto-refreshes at configurable rate
 - Render hook intercepts output, repositions cursor to overwrite previous render
@@ -23,7 +23,7 @@ Rich's most visible feature is its animated output — the spinning dots during 
 - NOT diff-based: full redraw via cursor-up + erase-line per previous row
 - Vertical overflow handling: crop, ellipsis, visible
 
-### Rich (Python) — Status
+### Rich (Python): Status
 
 - Wraps Live with a spinner + message display
 - ~90 built-in spinner styles (Dots, Line, Star, BouncingBar, etc.)
@@ -39,7 +39,7 @@ Rich's most visible feature is its animated output — the spinning dots during 
 
 ### Key Insight
 
-Thuja's existing architecture is actually *better positioned* for live rendering than Rich. Rich does full redraws because it has no diff engine. Thuja has ViewTree diffing, so animated elements only need to signal that they've changed — the diff engine handles minimal re-rendering automatically.
+Thuja's existing architecture is actually *better positioned* for live rendering than Rich. Rich does full redraws because it has no diff engine. Thuja has ViewTree diffing, so animated elements only need to signal that they've changed. The diff engine handles minimal re-rendering automatically.
 
 The missing piece is a framework-level subscription that drives a tick clock, and element types that advance their state on tick.
 
@@ -187,7 +187,7 @@ When a tick arrives:
 4. ViewTree diff detects changed spinner text
 5. Only the spinner region is re-rendered
 
-This is dramatically more efficient than Rich's full-redraw — only the few characters of the spinner are written to the terminal on each tick.
+This is dramatically more efficient than Rich's full-redraw. Only the few characters of the spinner are written to the terminal on each tick.
 
 ### Frame Rate Management
 
@@ -264,7 +264,7 @@ Spinner.moon        // 🌑 🌒 🌓 ...
 
 The core animation system is entirely pure:
 
-- `Spinner` is a record of `string list * int` — no runtime dependency
+- `Spinner` is a record of `string list * int` with no runtime dependency
 - `Spinner.frame` is pure: `int64 -> Spinner -> string`
 - `StatusView.render` is pure: `int64 -> StatusView -> StyledText`
 - All frame computation is deterministic arithmetic
@@ -272,7 +272,7 @@ The core animation system is entirely pure:
 The *only* impure piece is `tickSubscription`, which needs a timer. This is abstracted:
 
 ```fsharp
-/// Timer abstraction — injected by the runtime.
+/// Timer abstraction, injected by the runtime.
 type ITimer =
     abstract StartInterval: intervalMs: int * callback: (unit -> unit) -> unit
     abstract Stop: unit -> unit

@@ -1,7 +1,7 @@
 # PRD-022: FigletText (ASCII Art Banners)
 
 **Status:** Draft
-**Tier:** 2 — Widget Catalog
+**Tier:** 2, Widget Catalog
 **Dependencies:** PRD-000 (Measure), PRD-001 (Segment), PRD-002 (Color)
 **Unlocks:** Application splash screens, section headers, visual emphasis
 
@@ -9,7 +9,7 @@
 
 ## 1. Problem Statement
 
-Large ASCII art text banners are a staple of terminal applications — splash screens, section headers, tool branding. FIGlet is the standard format for ASCII art fonts, with hundreds of freely available font files. Both Rich and Spectre.Console support FIGlet rendering.
+Large ASCII art text banners are a staple of terminal applications: splash screens, section headers, and tool branding. FIGlet is the standard format for ASCII art fonts, with hundreds of freely available font files. Both Rich and Spectre.Console support FIGlet rendering.
 
 ## 2. Reference Analysis
 
@@ -84,10 +84,10 @@ FigletText renders as a multi-line text element via the segment model. Each line
 
 ## 5. Responsive Behavior
 
-- FIGlet art has a fixed character width per font — it can't reflow
+- FIGlet art has a fixed character width per font and cannot reflow
 - On narrow terminals: left-aligned with clipping (art extends off-screen)
 - With Center alignment: centered within available width, clipped if too wide
-- Measurement minimum = widest single character — below this, output is meaningless
+- Measurement minimum = widest single character. Below this threshold, output is meaningless
 
 ## 6. API Surface
 
@@ -103,8 +103,8 @@ figlet [ Font customFont ] "WELCOME"
 ## 7. .NET-Free Design Notes
 
 - Font parsing is pure: `string -> Result<FigletFont, string>`
-- No file IO in the library — user provides font content as string
-- Character map is `Map<char, string list>` — F# immutable map
+- No file IO in the library. The user provides font content as a string
+- Character map is `Map<char, string list>`, an F# immutable map
 - Rendering is pure string concatenation
 - Default font embedded as a string literal in source (no resource files)
 - No `System.IO`, `System.Resources`, or reflection

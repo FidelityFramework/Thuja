@@ -1,7 +1,7 @@
 # PRD-026: Interactive Prompts
 
 **Status:** Draft
-**Tier:** 2 — Widget Catalog
+**Tier:** 2, Widget Catalog
 **Dependencies:** PRD-001 (Segment), PRD-010 (Markup), PRD-012 (Live Rendering)
 **Unlocks:** CLI wizards, configuration tools, interactive installers
 
@@ -9,7 +9,7 @@
 
 ## 1. Problem Statement
 
-Interactive input beyond raw key bindings is essential for CLI applications — text entry with validation, selection from a list, multi-select with checkboxes, yes/no confirmation. Thuja's current input model is low-level key events mapped to messages. Users must build all input UI from scratch. Rich and Spectre.Console both provide high-level prompt widgets.
+Interactive input beyond raw key bindings is essential for CLI applications: text entry with validation, selection from a list, multi-select with checkboxes, and yes/no confirmation. Thuja's current input model is low-level key events mapped to messages. Users must build all input UI from scratch. Rich and Spectre.Console both provide high-level prompt widgets.
 
 ## 2. Reference Analysis
 
@@ -25,13 +25,13 @@ Interactive input beyond raw key bindings is essential for CLI applications — 
 
 ### Key Architectural Note
 
-In Spectre.Console, prompts are *blocking* — they take over the terminal until answered. This is fundamentally at odds with the Elm architecture where all state changes flow through Update. For Thuja, prompts must be *non-blocking elements within the MVU loop*.
+In Spectre.Console, prompts are *blocking*. They take over the terminal until answered. This is fundamentally at odds with the Elm architecture where all state changes flow through Update. For Thuja, prompts must be *non-blocking elements within the MVU loop*.
 
 ## 3. F# Native Design
 
 ### Prompt as Model+View+Update
 
-Each prompt type is a mini Elm component — a model, view, and update triple that the user composes into their application:
+Each prompt type is a mini Elm component: a model, view, and update triple that the user composes into their application:
 
 ```fsharp
 /// Text input prompt state.
@@ -209,7 +209,7 @@ let keyBindings = function
     | ...
 ```
 
-This is fundamentally different from Rich/Spectre.Console's blocking prompts. It's more composable — prompts can appear alongside other elements, animate, and respond to external events. They're just more elements in the view tree.
+This is fundamentally different from Rich/Spectre.Console's blocking prompts. It's more composable. Prompts can appear alongside other elements, animate, and respond to external events. They're just more elements in the view tree.
 
 ## 5. Responsive Behavior
 
@@ -248,8 +248,8 @@ let confirm = Confirmation.init "Delete all files?"
 - View functions are pure: `Model -> Region -> ViewTree`
 - Key binding functions are pure: `KeyInput * KeyModifiers -> Msg option`
 - No `System.Console.ReadLine()` or blocking IO
-- No threading — prompts are synchronous state machines within the MVU loop
-- Type conversion for TextPrompt (parsing strings to int, float, etc.) is provided as user-supplied functions `string -> Result<'T, string>` — no `System.Convert`
+- No threading. Prompts are synchronous state machines within the MVU loop
+- Type conversion for TextPrompt (parsing strings to int, float, etc.) is provided as user-supplied functions `string -> Result<'T, string>`, not `System.Convert`
 
 ## 8. Acceptance Criteria
 

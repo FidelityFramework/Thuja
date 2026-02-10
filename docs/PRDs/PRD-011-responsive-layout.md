@@ -1,7 +1,7 @@
 # PRD-011: Responsive Layout System
 
 **Status:** Draft
-**Tier:** 1 — Core Capability
+**Tier:** 1, Core Capability
 **Dependencies:** PRD-000 (Measure Protocol), PRD-001 (Segment Model)
 **Unlocks:** All complex UI composition, responsive applications on tiling WMs
 
@@ -16,11 +16,11 @@ Thuja's current layout system (`columns`, `rows`, `grid`) uses fixed proportions
 - **Collapse behavior:** No way to hide or reorganize elements below a width threshold
 - **Overflow strategy:** When content doesn't fit, there's no systematic response
 
-On tiling window managers like Hyprland, terminal windows are constantly resized — split, stacked, moved between monitors of different DPI. A TUI framework must handle this gracefully, similar to responsive web design but adapted to the character grid model of terminals.
+On tiling window managers like Hyprland, terminal windows are constantly resized: split, stacked, moved between monitors of different DPI. A TUI framework must handle this gracefully, similar to responsive web design but adapted to the character grid model of terminals.
 
 ## 2. Reference Analysis
 
-### Rich (Python) — Layout Class
+### Rich (Python): Layout Class
 
 Rich's Layout divides terminal space into a tree of named regions:
 - `split_column()` / `split_row()` for vertical/horizontal splits
@@ -28,7 +28,7 @@ Rich's Layout divides terminal space into a tree of named regions:
 - Allocation: fixed sizes first, remaining distributed by ratio with minimum floors
 - `visible` property to show/hide sections dynamically
 
-### Textual (Python) — CSS Layout
+### Textual (Python): CSS Layout
 
 Textual implements CSS-like layout for terminals:
 - Layout modes: `vertical` (flexbox column), `horizontal` (flexbox row), `grid`
@@ -122,7 +122,7 @@ module LayoutAllocator =
         // If total > available:
         //   a. Shrink Auto slots toward their minimums (proportionally)
         //   b. If still over, shrink Fr slots proportionally
-        //   c. If still over, all flexible slots at minimum — content clips
+        //   c. If still over, all flexible slots at minimum; content clips
         //
         // If total < available:
         //   a. Expand Auto slots toward their maximums
@@ -206,11 +206,11 @@ let columns (props: LayoutProps list) =
 
 The view function receives a Region that reflects current terminal size. When the terminal resizes, the Elm loop calls view with the new Region. Layout elements use the Region's dimensions to drive allocation, measurement, and breakpoint evaluation.
 
-No changes to the Elm loop itself — responsiveness is entirely within the view function.
+No changes to the Elm loop itself. Responsiveness is entirely within the view function.
 
 ### ViewTree Diffing
 
-Layout changes due to resize produce different ViewTrees. The structural diff engine detects all changes and re-renders affected elements. This is more efficient than Rich's full-redraw approach — only the elements whose allocated space actually changed are re-rendered.
+Layout changes due to resize produce different ViewTrees. The structural diff engine detects all changes and re-renders affected elements. This is more efficient than Rich's full-redraw approach. Only the elements whose allocated space actually changed are re-rendered.
 
 ### Region Subdivision
 

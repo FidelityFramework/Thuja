@@ -1,7 +1,7 @@
 # PRD-020: Tree Widget
 
 **Status:** Draft
-**Tier:** 2 — Widget Catalog
+**Tier:** 2, Widget Catalog
 **Dependencies:** PRD-000 (Measure), PRD-001 (Segment), PRD-010 (Markup), PRD-014 (Borders)
 **Unlocks:** File system browsers, hierarchical data display, AST viewers
 
@@ -17,7 +17,7 @@ Hierarchical data is common in terminal applications: file trees, dependency gra
 
 - `Tree(label)` with `tree.add(child)` for building
 - Guide styles: normal (`│ ├── └──`), bold (`┃ ┣━━ ┗━━`), double (`║ ╠══ ╚══`), ascii
-- Labels can be any renderable (Text, Panel, Table — not just strings)
+- Labels can be any renderable (Text, Panel, Table, not just strings)
 - `__rich_measure__` walks entire tree, accounting for indent per level
 - `__rich_console__` uses iterative stack-based traversal (not recursion)
 - Inherited styles cascade from parent to children
@@ -134,7 +134,7 @@ tree [] (TreeNode.node "[bold]src[/]" [
 
 - Label truncation: when width is too narrow, labels truncate with ellipsis
 - Deep trees: when indent exceeds available width, deeper nodes clip
-- Measurement minimum = widest (guide_width + shortest_label) — ensures at least the label is partially visible
+- Measurement minimum = widest (guide_width + shortest_label), ensuring at least the label is partially visible
 
 ## 6. API Surface
 
@@ -155,11 +155,11 @@ tree [ Guide TreeGuide.line ] dirTree
 
 ## 7. .NET-Free Design Notes
 
-- `TreeNode<'a>` is a generic F# record — no BCL collections
+- `TreeNode<'a>` is a generic F# record with no BCL collections
 - `TreeGuide` is a record of string constants
-- Tree traversal uses an explicit stack (F# list) — no System.Collections.Stack
+- Tree traversal uses an explicit stack (F# list), not System.Collections.Stack
 - All rendering is pure: `TreeNode -> Region -> Command list`
-- No `System.IO` for directory trees — that's user-space code building `TreeNode` values
+- No `System.IO` for directory trees. That is user-space code building `TreeNode` values
 
 ## 8. Acceptance Criteria
 

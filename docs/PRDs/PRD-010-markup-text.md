@@ -1,7 +1,7 @@
 # PRD-010: Markup Text System
 
 **Status:** Draft
-**Tier:** 1 — Core Capability
+**Tier:** 1, Core Capability
 **Dependencies:** PRD-001 (Segment Model), PRD-002 (Color System)
 **Unlocks:** All widgets that display styled text, PRD-022 (FigletText), PRD-024 (Markdown)
 
@@ -18,7 +18,7 @@ text [ Color Red ] "Error"
 
 This works for simple cases but becomes unwieldy for mixed-style text. There's no way to express "Error: file [bold]config.json[/bold] not found" as a single string. Users must break content into multiple elements or use raw ANSI codes.
 
-Rich and Spectre.Console both provide inline markup syntax that lets users embed style directives in text strings. This is fundamental to the "rich terminal" experience — it appears in progress bar labels, panel titles, table cells, tree node labels, and throughout the widget catalog.
+Rich and Spectre.Console both provide inline markup syntax that lets users embed style directives in text strings. This is fundamental to the "rich terminal" experience. It appears in progress bar labels, panel titles, table cells, tree node labels, and throughout the widget catalog.
 
 ## 2. Reference Analysis
 
@@ -53,29 +53,29 @@ No markup parser. Styled text is `(Style * string)` tuples created via extension
 ### Markup Syntax
 
 ```
-[style]text[/]         — styled span with auto-close
-[style]text[/style]    — styled span with explicit close
-[/]                    — close innermost open tag
-[[                     — literal [ (escaped)
-]]                     — literal ] (escaped)
+[style]text[/]         // styled span with auto-close
+[style]text[/style]    // styled span with explicit close
+[/]                    // close innermost open tag
+[[                     // literal [ (escaped)
+]]                     // literal ] (escaped)
 ```
 
 Style syntax within brackets:
 ```
-bold                   — text decoration
-italic underline       — multiple decorations (space-separated)
-red                    — foreground color (named)
-on blue                — background color
-bold red on blue       — combined
-#FF5733                — hex foreground color
-rgb(255,87,51)         — RGB foreground color
-on #003366             — hex background color
+bold                   // text decoration
+italic underline       // multiple decorations (space-separated)
+red                    // foreground color (named)
+on blue                // background color
+bold red on blue       // combined
+#FF5733                // hex foreground color
+rgb(255,87,51)         // RGB foreground color
+on #003366             // hex background color
 ```
 
 ### Parsed Representation
 
 ```fsharp
-/// A span of styled text — the output of markup parsing.
+/// A span of styled text -- the output of markup parsing.
 type StyledSpan = {
     Text: string
     Style: Style
@@ -117,7 +117,7 @@ type MarkupError =
 ### Parser Implementation Sketch
 
 ```fsharp
-// The parser maintains a style stack — each open tag pushes, close pops.
+// The parser maintains a style stack. Each open tag pushes; close pops.
 // Styles compose: [bold][red]text[/][/] → bold+red applied to "text"
 //
 // Algorithm:
@@ -199,7 +199,7 @@ Markup text participates in measurement (PRD-000):
 - `displayWidth` calculates cell width ignoring tags
 - `Minimum` = longest word (markup-stripped) cell width
 - `Maximum` = longest line (markup-stripped) cell width
-- Word wrapping respects markup spans — a span can wrap across lines while maintaining its style. The style stack carries across line breaks.
+- Word wrapping respects markup spans. A span can wrap across lines while maintaining its style. The style stack carries across line breaks.
 
 ## 6. API Surface
 
@@ -236,7 +236,7 @@ let segments = StyledText.toSegments spans
 - No regex dependency (hand-written scanner over character array/indices)
 - `StyledSpan` and `StyledText` are plain F# records/lists
 - `MarkupError` is a plain DU with position information
-- `StyleParser.parse` is pure string processing — no BCL style types
+- `StyleParser.parse` is pure string processing with no BCL style types
 - No `System.Text.RegularExpressions` or similar
 - Escape function is pure string replacement
 

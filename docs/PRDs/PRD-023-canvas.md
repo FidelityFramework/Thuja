@@ -1,7 +1,7 @@
 # PRD-023: Canvas (Pixel Drawing)
 
 **Status:** Draft
-**Tier:** 2 — Widget Catalog
+**Tier:** 2, Widget Catalog
 **Dependencies:** PRD-001 (Segment), PRD-002 (Color)
 **Unlocks:** Graphs, sparklines, custom visualizations, pixel art, heatmaps
 
@@ -9,7 +9,7 @@
 
 ## 1. Problem Statement
 
-Some visualizations require pixel-level control — plotting data points, rendering sparklines, drawing custom graphics, displaying heatmaps. Terminal "pixels" use half-block characters (`▀▄█`) to achieve 2x vertical resolution within a single character cell. Both Rich and Spectre.Console provide canvas widgets for this.
+Some visualizations require pixel-level control: plotting data points, rendering sparklines, drawing custom graphics, and displaying heatmaps. Terminal "pixels" use half-block characters (`▀▄█`) to achieve 2x vertical resolution within a single character cell. Both Rich and Spectre.Console provide canvas widgets for this.
 
 ## 2. Reference Analysis
 
@@ -134,7 +134,7 @@ Measurement: minimum = 1 char wide (2 pixels), maximum = `canvas.Width / pixelWi
 
 - With `Scale` prop: canvas auto-scales to fit region (nearest-neighbor resampling)
 - Without `Scale`: clips to region dimensions
-- Sparklines naturally adapt — they plot `width` data points across available width
+- Sparklines naturally adapt, plotting `width` data points across available width
 - Half-block rendering gives 2x vertical resolution without extra width
 
 ## 6. API Surface
@@ -158,16 +158,16 @@ let heatmap data = ... // maps values to color gradient, sets pixels
 
 ## 7. .NET-Free Design Notes
 
-- `Canvas` is a record with an array — `array` is F# native, no BCL collection
+- `Canvas` is a record with an array. `array` is F# native, not a BCL collection
 - All drawing functions are pure: `Canvas -> Canvas` (functional builder pattern)
 - Half-block rendering is pure string/style composition
 - No `System.Drawing`, no image libraries
-- Color values use the Color type (PRD-002) — no System.ConsoleColor
+- Color values use the Color type (PRD-002), not System.ConsoleColor
 - Pixel array is the only mutable structure (array), wrapped in immutable record
 
 ### Note on Array vs List
 
-The pixel array uses `array` for O(1) random access (essential for `setPixel`). This is a pragmatic choice — F# arrays compile to any runtime that supports contiguous memory. The array is never exposed; the API is functional (`Canvas -> Canvas`).
+The pixel array uses `array` for O(1) random access (essential for `setPixel`). This is a pragmatic choice. F# arrays compile to any runtime that supports contiguous memory. The array is never exposed; the API is functional (`Canvas -> Canvas`).
 
 ## 8. Acceptance Criteria
 

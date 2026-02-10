@@ -1,7 +1,7 @@
 # PRD-027: Calendar Widget
 
 **Status:** Draft
-**Tier:** 2 — Widget Catalog
+**Tier:** 2, Widget Catalog
 **Dependencies:** PRD-000 (Measure), PRD-001 (Segment), PRD-014 (Borders)
 **Unlocks:** Date pickers, event displays, scheduling interfaces
 
@@ -150,9 +150,9 @@ columns [ LayoutSlot.auto; LayoutSlot.fr 1 ] [
 
 ## 5. Responsive Behavior
 
-- Calendar has a natural minimum width (~22 chars) — below this, it clips
+- Calendar has a natural minimum width (~22 chars). Below this, it clips
 - If extra width available, cells can expand with more padding
-- Height is fixed (header + 7 rows max) — doesn't need vertical responsiveness
+- Height is fixed (header + 7 rows max) and does not need vertical responsiveness
 - On very narrow terminals, the calendar could switch to compact mode (single column: "Dec 1 - Event name")
 
 ## 6. API Surface
@@ -176,10 +176,10 @@ calendar [
 
 ## 7. .NET-Free Design Notes
 
-- `DayOfWeek` is a custom DU — not `System.DayOfWeek`
-- Date calculations are pure integer arithmetic — no `System.DateTime`
+- `DayOfWeek` is a custom DU, not `System.DayOfWeek`
+- Date calculations are pure integer arithmetic with no `System.DateTime`
 - `daysInMonth` and `dayOfWeek` use well-known algorithms (no BCL)
-- Month/day names are string arrays — no `System.Globalization.CultureInfo`
+- Month/day names are string arrays with no `System.Globalization.CultureInfo`
 - All rendering is pure: `(year, month, events) -> Region -> ViewTree`
 - Localization is explicit (user passes day names) rather than implicit (CultureInfo)
 
