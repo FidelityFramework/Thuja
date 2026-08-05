@@ -3,12 +3,6 @@ namespace Thuja.Elements
 open Thuja.View
 open Thuja.Styles
 
-type Margin =
-  | Top of size: int
-  | Bottom of size: int
-  | Right of size: int
-  | Left of size: int
-
 type RegionProps =
   | Width of size: int
   | Height of size: int
@@ -35,7 +29,7 @@ module Region =
       props 
       |> Seq.choose ^function | Align align -> Some align | _ -> None
       |> Seq.tryHead
-      |> Option.defaultValue TopLeft
+      |> Option.defaultValue Align.TopLeft
 
     let margins = 
       props 
@@ -46,10 +40,10 @@ module Region =
       margins
       |> Seq.fold (fun region margin ->
           match margin with
-          | Left size -> { region with X1 = region.X1 + size }
-          | Top size -> { region with Y1 = region.Y1 + size }
-          | Right size -> { region with X2 = region.X2 - size }
-          | Bottom size -> { region with Y2 = region.Y2 - size })
+          | Margin.Left size -> { region with X1 = region.X1 + size }
+          | Margin.Top size -> { region with Y1 = region.Y1 + size }
+          | Margin.Right size -> { region with X2 = region.X2 - size }
+          | Margin.Bottom size -> { region with Y2 = region.Y2 - size })
         region
 
     // alignment

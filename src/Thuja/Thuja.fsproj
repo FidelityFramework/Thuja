@@ -23,7 +23,6 @@
   <ItemGroup>
     <Compile Include="Prelude.fs" />
     <Compile Include="Core.fs" />
-    <Compile Include="View.fs" />
     <Compile Include="Styles.fs" />
     <Compile Include="Elements\Helpers.fs" />
     <Compile Include="Elements\Empty.fs" />

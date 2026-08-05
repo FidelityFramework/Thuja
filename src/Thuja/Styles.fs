@@ -89,6 +89,13 @@ module Attribute =
   let Strike =     SGR "9"
   let SGR param =  SGR param
 
+// margins
+type Margin =
+  | Top of size: int
+  | Bottom of size: int
+  | Right of size: int
+  | Left of size: int
+
 // alignment
 type Align =
   | Top

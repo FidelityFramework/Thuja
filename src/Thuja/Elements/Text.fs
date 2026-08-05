@@ -85,7 +85,9 @@ type internal Text =
                 |> String.rev
                 |> String.truncate (overflow = Ellipsis) region.Width
                 |> String.rev
-                
+        |> Seq.append <|
+            [ for _ in 1 .. region.Height - Seq.length lines 
+                do String.replicate region.Width " " ]   
         |> Seq.truncate region.Height
 
       let lines =
