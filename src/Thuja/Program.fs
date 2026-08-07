@@ -25,6 +25,10 @@ type Program<'model, 'msg> private =
     Subscriptions : Sub<'msg> list }
 
 [<RequireQualifiedAccess>]
+type Signal private =
+  | Refresh
+
+[<RequireQualifiedAccess>]
 module Program =
   let private exitEvent = new AutoResetEvent false
   let exit() = ignore <| exitEvent.Set(); [] : Cmd<'msg>
@@ -55,7 +59,7 @@ module Program =
     let model, view, update = program.Model, program.View, program.Update
 
     // main loop
-    use agent = MailboxProcessor<'msg>.Start ^fun inbox ->
+    use agent = MailboxProcessor<Choice<'msg, Signal>>.Start ^fun inbox ->
 
       backend.OnInput.Add ^fun (key, modifiers) ->
         let cmd = program.KeyBindings (key, modifiers)
@@ -63,14 +67,17 @@ module Program =
           try
             for task in cmd do
               let! msg = task
-              inbox.Post msg
+              inbox.Post <| Choice1Of2 msg
           with exc -> 
             backend.Dispose() // for graceful shutdown
             raise exc // reraise exception from the app
         } |> Async.Start
 
+      backend.OnResize.Add ^fun _ ->
+        inbox.Post <| Choice2Of2 Signal.Refresh
+
       for sub in program.Subscriptions do
-        sub inbox.Post
+        sub (inbox.Post << Choice1Of2) 
 
       let rec loop state (model, cmd : Cmd<'msg>) = async {
         // update commands processing
@@ -78,7 +85,7 @@ module Program =
           try
             for task in cmd do
               let! msg = task
-              inbox.Post msg
+              inbox.Post <| Choice1Of2 msg
           with exc -> 
             backend.Dispose() // for graceful shutdown
             raise exc // reraise exception from the app
@@ -97,11 +104,18 @@ module Program =
 
         let! msg = inbox.Receive()
 
-        return! loop viewTree (update model msg)
+        let next =
+          match msg with
+          | Choice1Of2 msg -> 
+              loop viewTree (update model msg)
+          | Choice2Of2 Signal.Refresh ->
+              backend.Execute [ Clear ]
+              loop ViewTree.empty (model, Cmd.none)
+
+        return! next
       }
 
-      let empty = ViewTree.create Empty.singleton Region.empty []
-      loop empty (model, Cmd.none)
+      loop ViewTree.empty (model, Cmd.none)
 
     // handle exceptions
     agent.Error.Add ^fun exc -> 

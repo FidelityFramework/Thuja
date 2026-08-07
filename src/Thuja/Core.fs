@@ -19,6 +19,7 @@ type Style =
 
 // render
 type Command =
+  | Clear
   | MoveTo of x: int * y: int
   | Print of content: string
   | PrintWith of style: Style * content: string
@@ -41,6 +42,7 @@ type IBackend =
   abstract TerminalSize : width: int * height: int with get
   abstract Execute: Command list -> unit
   abstract OnInput: IEvent<KeyInput * KeyModifiers>
+  abstract OnResize: IEvent<int * int>
 
 // view
 module View =

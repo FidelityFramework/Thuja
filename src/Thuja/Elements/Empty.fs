@@ -14,6 +14,9 @@ type internal Empty private () =
   end
     static member singleton = Empty()
 
+module ViewTree =
+  let empty = ViewTree.create Empty.singleton Region.empty []
+  
 [<AutoOpen>]
 module Empty =
   let empty (_ : Region) : ViewTree =

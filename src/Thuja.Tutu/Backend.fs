@@ -12,11 +12,16 @@ type TutuBackend() =
   do Terminal.beginSession()
 
   let input = new Event<KeyInput * Thuja.KeyModifiers>()
+  let resize = new Event<int * int>()
+
+  let debounceResize = debounce 250 resize.Trigger
+
   do Async.Start(async {
-    while true do
-      match SystemEventReader.Instance.Read() with
-      | KeyCodeEvent (key, modifiers) -> input.Trigger (key, modifiers)
-      | _ -> ()
+      while true do
+          match SystemEventReader.Instance.Read() with
+          | KeyCodeEvent (key, modifiers) -> input.Trigger (key, modifiers)
+          | TerminalResizeEvent (column, row) -> debounceResize (column, row) 
+          | _ -> ()
   })
 
   interface IBackend with
@@ -26,6 +31,7 @@ type TutuBackend() =
     member _.Execute(commands : Command list) : unit = 
       commands
       |> Seq.collect (function
+          | Clear -> [ Terminal.Clear ClearType.All ]
           | MoveTo (x, y) -> [ Cursor.MoveTo(x, y) ]
           | Print content -> [ Style.Print content ]
           | PrintWith (style, content) -> [ 
@@ -37,6 +43,7 @@ type TutuBackend() =
       Terminal.execute [ Cursor.Hide ]
 
     member _.OnInput : IEvent<KeyInput * Thuja.KeyModifiers> = input.Publish
+    member _.OnResize : IEvent<int * int> = resize.Publish
 
     member _.Dispose() : unit = 
       do Terminal.endSession()
