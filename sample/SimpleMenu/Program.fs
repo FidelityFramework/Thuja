@@ -1,8 +1,6 @@
 ﻿open System
 
 open Thuja
-open Thuja.Tutu
-open Thuja.Styles
 open Thuja.Elements
 
 // model
@@ -24,7 +22,7 @@ let view selected =
   ]
 
 // update
-let update selected event  =
+let update selected event =
   let length = 2
   match event with
   | Char 'q', _
@@ -36,5 +34,4 @@ let update selected event  =
 // program
 Program.make selected view update
 |> Program.withKeyBindings Cmd.ofMsg
-|> Program.withTutuBackend
 |> Program.run

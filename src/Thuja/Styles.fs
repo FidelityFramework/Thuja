@@ -5,38 +5,45 @@ open System.Globalization
 open System.Text.RegularExpressions
 
 open Thuja
+open Thuja.View
 
 // colors
-type String with
+type Char with
   member this.With(color : Color) =
-    { Foreground = color
-      Background = Reset
-      Attributes = [] },
-    this
+    Symbol
+      (this,
+      { Foreground = color
+        Background = Reset
+        Attributes = [] })
+      
 
   member this.With(attributes : Attribute list) =
-    { Foreground = Reset
-      Background = Reset
-      Attributes = attributes },
-    this
+    Symbol
+      (this,
+      { Foreground = Reset
+        Background = Reset
+        Attributes = attributes })
 
   member this.On(color : Color) =
-    { Foreground = Reset
-      Background = color
-      Attributes = [] },
-    this
+    Symbol
+      (this,
+      { Foreground = Reset
+        Background = color
+        Attributes = [] })
 
   member this.Styled(foreground : Color, background : Color) =
-    { Foreground = foreground
-      Background = background
-      Attributes = [] },
-    this
+    Symbol
+      (this,
+      { Foreground = foreground
+        Background = background
+        Attributes = [] })
 
   member this.Styled(foreground : Color, background : Color, attributes : Attribute list) =
-    { Foreground = foreground
-      Background = background
-      Attributes = attributes },
-    this
+    Symbol
+      (this,
+      { Foreground = foreground
+        Background = background
+        Attributes = attributes })
 
 module Color = 
   // default
@@ -127,35 +134,35 @@ module internal Border =
 
   let Styles = Map [
     Normal, Map [
-      Horizontal,  "─"
-      Vertical,    "│"
-      TopLeft,     "┌"
-      BottomLeft,  "└"
-      TopRight,    "┐"
-      BottomRight, "┘"
+      Horizontal,  '─'
+      Vertical,    '│'
+      TopLeft,     '┌'
+      BottomLeft,  '└'
+      TopRight,    '┐'
+      BottomRight, '┘'
     ]
     Rounded, Map [
-      Horizontal,  "─"
-      Vertical,    "│"
-      TopLeft,     "╭"
-      BottomLeft,  "╰"
-      TopRight,    "╮"
-      BottomRight, "╯"
+      Horizontal,  '─'
+      Vertical,    '│'
+      TopLeft,     '╭'
+      BottomLeft,  '╰'
+      TopRight,    '╮'
+      BottomRight, '╯'
     ]
     Thick, Map [
-      Horizontal,  "━"
-      Vertical,    "┃"
-      TopLeft,     "┏"
-      BottomLeft,  "┗"
-      TopRight,    "┓"
-      BottomRight, "┛"
+      Horizontal,  '━'
+      Vertical,    '┃'
+      TopLeft,     '┏'
+      BottomLeft,  '┗'
+      TopRight,    '┓'
+      BottomRight, '┛'
     ]
     Double, Map [
-      Horizontal,  "═"
-      Vertical,    "║"
-      TopLeft,     "╔"
-      BottomLeft,  "╚"
-      TopRight,    "╗"
-      BottomRight, "╝"
+      Horizontal,  '═'
+      Vertical,    '║'
+      TopLeft,     '╔'
+      BottomLeft,  '╚'
+      TopRight,    '╗'
+      BottomRight, '╝'
     ]
   ]

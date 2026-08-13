@@ -1,28 +1,27 @@
 namespace Thuja.Elements
 
-open System
 open System.Collections
 
-open Thuja
 open Thuja.View
-open Thuja.Elements.Helpers
 
 type internal Raw<'model when 'model : equality> =
   { Model: 'model
     Process: 'model -> int * int -> string }
   interface IElement with
-    member this.Render(region : Region): Command list = 
-      [ for y in region.Y1..region.Y2 do
-          yield MoveTo (region.X1, y)
-          yield Print <| String.Empty.Truncate region.Width // clear
+    member this.Render(region : Region): Buffer = 
+      let buffer = Buffer.create region.Width region.Height
 
-        yield MoveTo (region.X1, region.Y1)
-        yield Print <| this.Process this.Model (region.Width, region.Height) ]
+      let raw = this.Process this.Model (region.Width, region.Height)
+      buffer.EnqueueRaw (0, 0) raw
+
+      buffer
+
     member this.Equals(obj : obj, comparer : IEqualityComparer): bool = 
       match obj with
       | :? Raw<'model> as other -> comparer.Equals(this.Model, other.Model)
       | _ -> false
-    member this.GetHashCode(_): int = 
+
+    member this.GetHashCode _: int = 
       hash this.Model
 
 [<AutoOpen>]

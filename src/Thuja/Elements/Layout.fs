@@ -31,6 +31,7 @@ module Layout =
     let regions =
       props
       |> Seq.scan (fun left prop -> left + calculateSize prop) region.X1
+      |> Seq.map (min region.X2)
       |> Seq.pairwise
       |> Seq.map ^fun (left, right) -> Region.create (left, region.Y1, right-1, region.Y2)
       |> Seq.toList
@@ -69,6 +70,7 @@ module Layout =
     let regions =
       props
       |> Seq.scan (fun top prop -> top + calculateSize prop) region.Y1
+      |> Seq.map (min region.Y2)
       |> Seq.pairwise
       |> Seq.map ^fun (top, bottom) -> Region.create (region.X1, top, region.X2, bottom-1)
       |> Seq.toList

@@ -1,17 +1,16 @@
 namespace Thuja.Elements
 
-open System
-
 open Thuja
 open Thuja.View
 open Thuja.Styles
-open Thuja.Elements.Helpers
+
+open Helpers
 
 type internal List =
   { Items: string list 
     Index: int }
   interface IElement with
-    member this.Render(region : Region) : Command list = 
+    member this.Render(region : Region) : Buffer = 
       let page = this.Index / region.Height
 
       let items =
@@ -21,16 +20,17 @@ type internal List =
         |> Seq.skip (page * region.Height)
         |> Seq.truncate region.Height
 
-      [ for index = 0 to region.Height - 1 do
-          yield MoveTo (region.X1, region.Y1 + index)
-          yield
-            match Seq.tryItem index items with
-            | Some item ->
-                if this.Index = page * region.Height + index
-                then PrintWith <| item.With [Attribute.Invert]
-                else Print <| item 
-            | None ->
-                Print <| String.Empty.Truncate region.Width ] // clear 
+      let buffer = Buffer.create region.Width region.Height
+
+      for index, item in Seq.indexed items do
+        let style =
+          if this.Index = page * region.Height + index
+          then { Style.defaultStyle with Attributes = [ Attribute.Invert ] }
+          else Style.defaultStyle
+
+        Buffer.writeText buffer style item 0 index
+
+      buffer 
 
 [<AutoOpen>]
 module List = 

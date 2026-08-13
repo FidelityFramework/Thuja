@@ -1,5 +1,4 @@
 ﻿open Thuja
-open Thuja.Tutu
 open Thuja.Elements
 
 let model = 
@@ -20,5 +19,4 @@ let view =
 
 // program
 Program.makeStatic view
-|> Program.withTutuBackend
 |> Program.run

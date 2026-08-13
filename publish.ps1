@@ -8,8 +8,7 @@ param(
 
 $outputDir = Join-Path $PWD "publish"
 $projects = @(
-    "src\Thuja\Thuja.fsproj",
-    "src\Thuja.Tutu\Thuja.Tutu.fsproj"
+    "src\Thuja\Thuja.fsproj"
 )
 
 # build

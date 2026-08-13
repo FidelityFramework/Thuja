@@ -16,7 +16,7 @@ type internal Rule =
   { Props: RuleProps list
     Type: RuleType }
   interface IElement with
-    member this.Render (region : Region): Command list =
+    member this.Render (region : Region): Buffer =
       // props
       let style = 
         this.Props 
@@ -33,15 +33,19 @@ type internal Rule =
       // lines
       let line symbol = Border.Styles.[style].[symbol].With color
 
+      let buffer = Buffer.create region.Width region.Height
+      let width = Buffer.length2 buffer
+      let height = Buffer.length1 buffer
+
       match this.Type with
       | Horizontal ->
-        [ for x = region.X1 to region.X2 do
-            yield! [ MoveTo (x, region.Y1)
-                     PrintWith <| line Border.Line.Horizontal ] ]
+        for x = 0 to width - 1 do
+          buffer[0, x] <- line Border.Line.Horizontal
       | Vertical ->
-        [ for y = region.Y1 to region.Y2 do  
-            yield! [ MoveTo (region.X1, y)
-                     PrintWith <| line Border.Line.Vertical ] ]
+        for y = 0 to height - 1 do
+          buffer[y, 0] <- line Border.Line.Vertical
+
+      buffer
 
 [<AutoOpen>]
 module Rule =

@@ -2,7 +2,6 @@
 open System.Timers
 
 open Thuja
-open Thuja.Tutu
 open Thuja.Elements
 open Thuja.Styles
 
@@ -38,5 +37,4 @@ let subscription dispatch =
 // program
 Program.make model view update
 |> Program.withSubscriptions [subscription]
-|> Program.withTutuBackend
 |> Program.run

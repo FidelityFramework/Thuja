@@ -3,7 +3,19 @@ namespace Thuja.Elements
 module internal Helpers =
   open System
   open System.Globalization
-  
+
+  open Thuja
+  open Thuja.View
+
+  module Buffer =
+    let writeText (buffer : Buffer) (style : Style) (text : string) (x : int) (y : int) =
+      let width = Buffer.length2 buffer
+      let height = Buffer.length1 buffer
+      if x >= 0 && x < width && y >= 0 && y < height then
+        for i = 0 to text.Length - 1 do
+          if x + i < width then
+            buffer[y, x + i] <- Symbol (text[i], style)
+
   type String with
     member this.TruncateWithEllipsis (length : int) =
       if this.Length > length
@@ -18,7 +30,7 @@ module internal Helpers =
     member this.Wrap (width : int) =
       let rec loop (words: string list) position = seq {
         match words with
-        | word::rest -> 
+        | word::rest ->
             let stuff, position =
               if position > 0 then
                 if position + word.Length < width then
@@ -32,17 +44,16 @@ module internal Helpers =
       }
       let words = this.Split(" ", StringSplitOptions.RemoveEmptyEntries) |> Seq.toList
       let text = loop words 0 |> String.concat ""
-      
+
       text.Split Environment.NewLine
-      
-  module String =
-    let truncate withEllipsis width (string : string) =
-      if withEllipsis then
+
+    static member truncate withEllipsis width (string : string) =
+      if withEllipsis && not <| String.IsNullOrWhiteSpace string then
         string.TruncateWithEllipsis width
       else
         string.Truncate width
 
-    let rev (string : string) =
+    static member rev (string : string) =
       StringInfo.ParseCombiningCharacters string
       |> Array.rev
       |> Seq.map ^fun ch -> StringInfo.GetNextTextElement(string, ch)

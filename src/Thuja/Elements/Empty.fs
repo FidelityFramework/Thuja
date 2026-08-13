@@ -1,15 +1,14 @@
 namespace Thuja.Elements
 
-open Thuja
 open Thuja.View
 
 type internal Empty private () =
   interface IElement with
-    member _.Render(_ : Region): Command list = 
-      []
-    member _.Equals(obj : obj, _): bool = 
+    member _.Render(_ : Region) : Buffer = 
+      Buffer.create 0 0
+    member _.Equals(obj : obj, _) : bool = 
       obj :? Empty
-    member this.GetHashCode _: int = 
+    member this.GetHashCode _ : int = 
       hash this
   end
     static member singleton = Empty()

@@ -13,7 +13,7 @@ type PanelProps =
 type internal Panel =
   { Props: PanelProps list }
   interface IElement with
-    member this.Render (region : Region): Command list =
+    member this.Render (region : Region): Buffer =
       // props
       let style = 
         this.Props 
@@ -30,26 +30,28 @@ type internal Panel =
       // lines
       let line symbol = Border.Styles.[style].[symbol].With color
 
-      [ for x = region.X1 to region.X2 do
-          yield! [ MoveTo (x, region.Y1)
-                   PrintWith <| line Horizontal 
-                   MoveTo (x, region.Y2)
-                   PrintWith <| line Horizontal ]
+      let buffer = Buffer.create region.Width region.Height
+      
+      let width = Buffer.length2 buffer
+      let height = Buffer.length1 buffer
 
-        for y = region.Y1 to region.Y2 do  
-          yield! [ MoveTo (region.X1, y)
-                   PrintWith <| line Vertical 
-                   MoveTo (region.X2, y)
-                   PrintWith <| line Vertical ]
+      if height > 0 then
+        for x = 0 to width - 1 do
+          buffer[0, x] <- line Horizontal
+          buffer[height - 1, x] <- line Horizontal
 
-        yield! [ MoveTo (region.X1, region.Y1)
-                 PrintWith <| line TopLeft 
-                 MoveTo (region.X1, region.Y2)
-                 PrintWith <| line BottomLeft 
-                 MoveTo (region.X2, region.Y1)
-                 PrintWith <| line TopRight 
-                 MoveTo (region.X2, region.Y2)
-                 PrintWith <| line BottomRight ] ]
+      if width > 0 then
+        for y = 0 to height - 1 do
+          buffer[y, 0] <- line Vertical
+          buffer[y, width - 1] <- line Vertical
+
+      if width > 0 && height > 0 then
+        buffer[0, 0] <- line TopLeft
+        buffer[0, width - 1] <- line TopRight
+        buffer[height - 1, 0] <- line BottomLeft
+        buffer[height - 1, width - 1] <- line BottomRight
+
+      buffer
 
 [<AutoOpen>]
 module Panel =

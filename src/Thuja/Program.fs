@@ -4,6 +4,7 @@ open System.Threading
 
 open Thuja
 open Thuja.View
+open Thuja.Backend
 open Thuja.Elements
 
 type Cmd<'msg> = Async<'msg> list
@@ -30,11 +31,12 @@ type Signal private =
 
 [<RequireQualifiedAccess>]
 module Program =
+
   let private exitEvent = new AutoResetEvent false
   let exit() = ignore <| exitEvent.Set(); [] : Cmd<'msg>
 
   let make (model : 'model) (view : 'model -> Region -> ViewTree) (update : 'model -> 'msg -> 'model * Cmd<'msg>) =
-    { Backend = fun _ -> failwith "Backend is not provided."
+    { Backend = fun _ -> new TerminalBackend()
       Model = model
       View = view
       Update = update
@@ -92,15 +94,22 @@ module Program =
         } |> Async.Start
 
         let width, height = backend.TerminalSize
-        let region = Region.create(width, height)
 
+        let region = Region.create(width, height)
         let viewTree = view model region
 
         // render
-        backend.Execute [
-          for element, region in ViewTree.difference viewTree state do
-            yield! element.Render region
-        ]
+        if state <> viewTree then 
+          let screen = Buffer.create region.Width region.Height
+
+          for element, region in ViewTree.toSeq viewTree do
+            let buffer = element.Render region
+            let width = Buffer.length2 buffer
+            let height = Buffer.length1 buffer
+            if width >= 0 && height >= 0 && region.Y1 >= 0 && region.X1 >= 0 then
+              Buffer.blit buffer screen region.Y1 region.X1
+
+          backend.Render screen
 
         let! msg = inbox.Receive()
 
@@ -109,7 +118,6 @@ module Program =
           | Choice1Of2 msg -> 
               loop viewTree (update model msg)
           | Choice2Of2 Signal.Refresh ->
-              backend.Execute [ Clear ]
               loop ViewTree.empty (model, Cmd.none)
 
         return! next

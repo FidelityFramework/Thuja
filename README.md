@@ -1,16 +1,20 @@
 # Thuja
 
-[![NuGet version](https://img.shields.io/nuget/v/Thuja.Tutu?style=flat-square&color=dark-green)](https://www.nuget.org/packages/Thuja.Tutu)
+[![NuGet version](https://img.shields.io/nuget/v/Thuja?style=flat-square&color=dark-green)](https://www.nuget.org/packages/Thuja.Tutu)
 
 <p align="center">
  <img width="200px" src="src/Thuja/icon.png" alt="icon"/>
 </p>
 
-Thuja (_pronounce:_ /ˈθuː.jə/) is a minimalistic [F#](https://fsharp.org) library to build terminal user interfaces. It's inspired by [Elm](https://elm-lang.org/) and based on [Tutu](https://github.com/lillo42/tutu/) as a cross-term backend implementation.
+Thuja (_pronounce:_ /ˈθuː.jə/) is a minimalistic [F#](https://fsharp.org) library to build terminal user interfaces. It's inspired by [Elm](https://elm-lang.org/) and targets ANSI-compatible terminals.
 
 ## Prerequisites
 
 - [.NET SDK](https://dotnet.microsoft.com/) to work with F# files and dependencies.
+
+## Documentation
+
+See the [Wiki](https://github.com/HenryKovalevsky/Thuja/wiki) for full documentation, details and other information.
 
 ## Usage
 
@@ -47,15 +51,10 @@ let update selected event  =
 // program
 Program.make selected view update
 |> Program.withKeyBindings Cmd.ofMsg
-|> Program.withTutuBackend
 |> Program.run
 ```
 
 ![example](./sample/SimpleMenu/example.gif "example") 
-
-## Documentation
-
-See the [Wiki](https://github.com/HenryKovalevsky/Thuja/wiki) for full documentation, details and other information.
 
 ## Todo (future features list)
 
@@ -65,11 +64,10 @@ See the [Wiki](https://github.com/HenryKovalevsky/Thuja/wiki) for full documenta
     - mouse input?
 - implement configurable subscriptions;
 - add different control elements:
-    - markup;
+    - markup?;
     - text input?;
     - buttons?;
     - ...
-- handle terminal resizing;
 - add tests;
 - add debug options;
 - ...

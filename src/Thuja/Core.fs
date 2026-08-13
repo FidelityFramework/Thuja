@@ -2,6 +2,7 @@ namespace Thuja
 
 open System 
 open System.Collections
+open System.Collections.Generic
 
 // style
 type Color = 
@@ -17,12 +18,11 @@ type Style =
     Background: Color
     Attributes: Attribute list }
 
-// render
-type Command =
-  | Clear
-  | MoveTo of x: int * y: int
-  | Print of content: string
-  | PrintWith of style: Style * content: string
+module Style =
+  let defaultStyle : Style =
+    { Foreground = Reset
+      Background = Reset
+      Attributes = [] }
 
 // input
 type KeyInput =
@@ -33,16 +33,7 @@ type KeyInput =
 
 [<Flags>]
 type KeyModifiers =
-  | None = 0b000 | Shift = 0b001 | Ctrl = 0b010 | Alt = 0b100
-
-// backend
-type IBackend =
-  inherit IDisposable
-
-  abstract TerminalSize : width: int * height: int with get
-  abstract Execute: Command list -> unit
-  abstract OnInput: IEvent<KeyInput * KeyModifiers>
-  abstract OnResize: IEvent<int * int>
+  | None = 0b000 | Alt = 0b001 | Shift = 0b010 | Ctrl = 0b100  
 
 // view
 module View =
@@ -50,8 +41,34 @@ module View =
     { X1: int; Y1: int
       X2: int; Y2: int }
 
+  type Symbol = char * Style
+  type Buffer private (width, height) =
+    let buffer = Array2D.create height width (Symbol (' ', Style.defaultStyle))
+    let queue = ResizeArray<_>()
+
+    member private _.Data = buffer
+    member private _.Queue = queue
+    member _.Item
+      with get(row, column) = buffer.[row, column]
+      and set(row, column) value = buffer.[row, column] <- value
+
+    member _.EnqueueRaw (row : int, column : int) (value : string) = queue.Add((row, column), value)
+    member _.Raw with get() = queue |> Seq.toList
+
+    static member create width height = Buffer(width, height)
+    static member length1 (buffer : Buffer) = Array2D.length1 buffer.Data 
+    static member length2 (buffer : Buffer) = Array2D.length2 buffer.Data 
+    static member blit (source : Buffer) (target : Buffer) column row = 
+      let width = Buffer.length2 source
+      let height = Buffer.length1 source
+      Array2D.blit source.Data 0 0 target.Data column row height width
+
+      source.Queue
+      |> Seq.map ^fun ((r, c), data) -> (r + row, c + column), data 
+      |> target.Queue.AddRange
+
   type IRenderable =
-    abstract Render: Region -> Command list
+    abstract Render: Region -> Buffer
 
   type IElement =
     inherit IRenderable
@@ -90,3 +107,12 @@ module View =
       toSeq aTree |> Seq.filter ^fun a -> 
         toSeq bTree |> Seq.cast<IStructuralEquatable> |> Seq.forall ^fun b -> 
           not <| b.Equals(a, StructuralComparisons.StructuralEqualityComparer)
+
+// backend
+type IBackend =
+  inherit IDisposable
+
+  abstract TerminalSize : width: int * height: int with get
+  abstract Render: View.Buffer -> unit
+  abstract OnInput: IEvent<KeyInput * KeyModifiers>
+  abstract OnResize: IEvent<int * int>

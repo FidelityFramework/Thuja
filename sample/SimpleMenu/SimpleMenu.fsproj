@@ -7,7 +7,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Thuja\Thuja.fsproj" />
-    <ProjectReference Include="..\..\src\Thuja.Tutu\Thuja.Tutu.fsproj" />
+    <ProjectReference Include="..\..\src\Thuja.Console\Thuja.Console.fsproj" />
   </ItemGroup>
 
   <ItemGroup>

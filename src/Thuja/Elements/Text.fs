@@ -5,7 +5,8 @@ open System
 open Thuja
 open Thuja.View
 open Thuja.Styles
-open Thuja.Elements.Helpers
+
+open Helpers
 
 type Overflow =
   | Wrap
@@ -23,7 +24,7 @@ type internal Text =
   { Props: TextProps list
     Content: string }
   interface IElement with
-    member this.Render(region : Region): Command list = 
+    member this.Render(region : Region): Buffer = 
       // props
       let color = 
         this.Props 
@@ -54,6 +55,11 @@ type internal Text =
         |> Seq.choose ^function | TextAlign align -> Some align | _ -> None
         |> Seq.tryHead
         |> Option.defaultValue Align.TopLeft
+
+      let style =
+        { Foreground = color
+          Background = background
+          Attributes = attributes }
 
       // content
       let lines = 
@@ -105,9 +111,12 @@ type internal Text =
             let gap = Seq.init margin ^fun _ -> String.Empty.Truncate region.Width
             Seq.concat [ gap; lines ]
 
-      [ for index, line in Seq.indexed lines do
-          yield MoveTo (region.X1, region.Y1 + index)
-          yield PrintWith <| line.Styled(color, background, attributes) ]
+      let buffer = Buffer.create region.Width region.Height
+
+      for y, line in Seq.indexed lines do
+        Buffer.writeText buffer style line 0 y
+
+      buffer
 
 [<AutoOpen>]
 module Text = 

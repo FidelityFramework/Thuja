@@ -4,7 +4,6 @@ open CliWrap
 open CliWrap.Buffered
 
 open Thuja
-open Thuja.Tutu
 open Thuja.Elements
 
 // https://hpjansson.org/chafa/
@@ -80,5 +79,4 @@ let keyBindings = function
 // program
 Program.make model view update
 |> Program.withKeyBindings keyBindings
-|> Program.withTutuBackend
 |> Program.run
