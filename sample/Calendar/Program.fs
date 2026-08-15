@@ -18,11 +18,12 @@ let rows = [
 
 let props =
   let layout = [ Absolute 5 ]@[ for _ in  1..7 do Fraction 1 ]
-  let borders = TableProps.BorderStyle Normal
+  let borderStyle = TableProps.BorderStyle Normal
+  let textAlign = TableProps.TextAlign Center
 
   Seq.empty
   |> Seq.append [ Columns layout ]
-  |> Seq.append [ borders ]
+  |> Seq.append [ borderStyle; textAlign ]
   |> Seq.toList
 
 let view =

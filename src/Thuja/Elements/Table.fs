@@ -17,6 +17,7 @@ type TableProps =
   | Columns of LayoutProps list
   | BorderStyle of BorderStyle
   | BorderColor of Color
+  | TextAlign of Align
   | CellStyle of row: int * column: int  * foreground: Color * background: Color
 
 type internal Table =
@@ -72,6 +73,34 @@ type internal Table =
         |> Seq.tryHead
         |> Option.defaultValue (List.replicate this.Headers.Length <| Fraction 1)
 
+      let align = 
+        this.Props 
+        |> Seq.choose ^function | TextAlign align -> Some align | _ -> None
+        |> Seq.tryHead
+        |> Option.defaultValue Align.Left
+
+      let alignText width line =
+        match align with 
+        | Align.Left | Align.TopLeft | Align.BottomLeft -> 
+            String.truncate true width line
+
+        | Align.Center | Align.Top | Align.Bottom -> 
+            let margin = Math.Max((width - line.Length) / 2, 0)
+            let gap = String.replicate margin " "
+            let line = gap + line
+
+            String.truncate true width line
+        
+        | Align.Right | Align.TopRight | Align.BottomRight -> 
+            let margin = Math.Max(width - line.Length, 0)
+            let gap = String.replicate margin " "
+            let line = gap + line
+            
+            line
+            |> String.rev
+            |> String.truncate true width
+            |> String.rev
+
       let gap = if isBordered then 2 else 0
 
       // layout 
@@ -108,7 +137,7 @@ type internal Table =
       // headers
       for columnIndex, cell in Seq.indexed this.Headers do
         let width = columnsWidths[columnIndex]
-        let text = String.truncate true width cell
+        let text = alignText width cell
         let x, y = columnsPositions[columnIndex] + gap, Math.Max(0, gap - 1)
         Buffer.writeText buffer headersStyle text x y
 
@@ -116,7 +145,7 @@ type internal Table =
       for rowIndex, row in Seq.indexed this.Data do
         for columnIndex, cell in Seq.indexed row do
         let width = columnsWidths[columnIndex]
-        let text = String.truncate true width cell
+        let text = alignText width cell
         let style = cellsStyles |> Map.tryFind (rowIndex, columnIndex) |> Option.defaultValue rowsStyle
         let x, y = columnsPositions[columnIndex] + gap, rowIndex + gap + 1 // headers gap
         Buffer.writeText buffer style text x y
