@@ -131,38 +131,63 @@ module internal Border =
     | TopRight
     | BottomLeft
     | BottomRight
+    | CrossingDown
+    | CrossingUp
+    | CrossingLeft
+    | CrossingRight
+    | Crossing
 
   let Styles = Map [
     Normal, Map [
-      Horizontal,  '─'
-      Vertical,    '│'
-      TopLeft,     '┌'
-      BottomLeft,  '└'
-      TopRight,    '┐'
-      BottomRight, '┘'
+      Horizontal,     '─'
+      Vertical,       '│'
+      TopLeft,        '┌'
+      BottomLeft,     '└'
+      TopRight,       '┐'
+      BottomRight,    '┘'
+      CrossingDown,   '┬'
+      CrossingUp,     '┴'
+      CrossingLeft,   '┤'
+      CrossingRight,  '├'
+      Crossing,       '┼'
     ]
     Rounded, Map [
-      Horizontal,  '─'
-      Vertical,    '│'
-      TopLeft,     '╭'
-      BottomLeft,  '╰'
-      TopRight,    '╮'
-      BottomRight, '╯'
+      Horizontal,     '─'
+      Vertical,       '│'
+      TopLeft,        '╭'
+      BottomLeft,     '╰'
+      TopRight,       '╮'
+      BottomRight,    '╯'
+      CrossingDown,   '┬'
+      CrossingUp,     '┴'
+      CrossingLeft,   '┤'
+      CrossingRight,  '├'
+      Crossing,       '┼'
     ]
     Thick, Map [
-      Horizontal,  '━'
-      Vertical,    '┃'
-      TopLeft,     '┏'
-      BottomLeft,  '┗'
-      TopRight,    '┓'
-      BottomRight, '┛'
+      Horizontal,     '━'
+      Vertical,       '┃'
+      TopLeft,        '┏'
+      BottomLeft,     '┗'
+      TopRight,       '┓'
+      BottomRight,    '┛'
+      CrossingDown,   '┳'
+      CrossingUp,     '┻'
+      CrossingLeft,   '┫'
+      CrossingRight,  '┣'
+      Crossing,       '╋'
     ]
     Double, Map [
-      Horizontal,  '═'
-      Vertical,    '║'
-      TopLeft,     '╔'
-      BottomLeft,  '╚'
-      TopRight,    '╗'
-      BottomRight, '╝'
+      Horizontal,     '═'
+      Vertical,       '║'
+      TopLeft,        '╔'
+      BottomLeft,     '╚'
+      TopRight,       '╗'
+      BottomRight,    '╝'
+      CrossingDown,   '╤'
+      CrossingUp,     '╧'
+      CrossingLeft,   '╣'
+      CrossingRight,  '╠'
+      Crossing,       '╬'
     ]
   ]
