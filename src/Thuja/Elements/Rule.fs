@@ -39,11 +39,13 @@ type internal Rule =
 
       match this.Type with
       | Horizontal ->
-        for x = 0 to width - 1 do
-          buffer[0, x] <- line Border.Line.Horizontal
+        if height > 0 then
+          for x = 0 to width - 1 do
+            buffer[0, x] <- line Border.Line.Horizontal
       | Vertical ->
-        for y = 0 to height - 1 do
-          buffer[y, 0] <- line Border.Line.Vertical
+        if width > 0 then
+          for y = 0 to height - 1 do
+            buffer[y, 0] <- line Border.Line.Vertical
 
       buffer
 

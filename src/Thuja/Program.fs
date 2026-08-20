@@ -1,6 +1,7 @@
 namespace Thuja
 
 open System.Threading
+open System.Threading.Tasks
 
 open Thuja
 open Thuja.View
@@ -15,6 +16,7 @@ module Cmd =
   let none : Cmd<'msg>= []
   let ofMsg msg : Cmd<'msg> = [async.Return msg]
   let ofAsync (async : Async<'msg>) : Cmd<'msg> = [async]
+  let ofTask (task : Task<'msg>) : Cmd<'msg> = [task |> Async.AwaitTask]
   let ofFunc (func: unit -> 'msg) : Cmd<'msg> = [async.Delay (func >> async.Return)]
 
 type Program<'model, 'msg> private = 
@@ -27,6 +29,7 @@ type Program<'model, 'msg> private =
 
 [<RequireQualifiedAccess>]
 type Signal private =
+  | Exception of exn
   | Refresh
 
 [<RequireQualifiedAccess>]
@@ -71,15 +74,14 @@ module Program =
               let! msg = task
               inbox.Post <| Choice1Of2 msg
           with exc -> 
-            backend.Dispose() // for graceful shutdown
-            raise exc // reraise exception from the app
+            inbox.Post <| Choice2Of2 (Signal.Exception exc)
         } |> Async.Start
 
       backend.OnResize.Add ^fun _ ->
         inbox.Post <| Choice2Of2 Signal.Refresh
 
       for sub in program.Subscriptions do
-        sub (inbox.Post << Choice1Of2) 
+        sub <| (inbox.Post << Choice1Of2) 
 
       let rec loop state (model, cmd : Cmd<'msg>) = async {
         // update commands processing
@@ -89,24 +91,20 @@ module Program =
               let! msg = task
               inbox.Post <| Choice1Of2 msg
           with exc -> 
-            backend.Dispose() // for graceful shutdown
-            raise exc // reraise exception from the app
+            inbox.Post <| Choice2Of2 (Signal.Exception exc)
         } |> Async.Start
 
         let width, height = backend.TerminalSize
-
         let region = Region.create(width, height)
         let viewTree = view model region
 
         // render
-        if state <> viewTree then 
+        if state <> viewTree && width >= 0 && height >= 0 then 
           let screen = Buffer.create region.Width region.Height
 
           for element, region in ViewTree.toSeq viewTree do
-            let buffer = element.Render region
-            let width = Buffer.length2 buffer
-            let height = Buffer.length1 buffer
-            if width >= 0 && height >= 0 && region.Y1 >= 0 && region.X1 >= 0 then
+            if region.Width > 0 && region.Height > 0 then
+              let buffer = element.Render region
               Buffer.blit buffer screen region.Y1 region.X1
 
           backend.Render screen
@@ -119,6 +117,8 @@ module Program =
               loop viewTree (update model msg)
           | Choice2Of2 Signal.Refresh ->
               loop ViewTree.empty (model, Cmd.none)
+          | Choice2Of2 (Signal.Exception exc) ->
+              raise exc // propagate exception
 
         return! next
       }

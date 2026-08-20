@@ -10,8 +10,10 @@ type internal List =
   { Items: string list 
     Index: int }
   interface IElement with
-    member this.Render(region : Region) : Buffer = 
-      let page = this.Index / region.Height
+    member this.Render(region : Region) : Buffer =
+      let page = 
+        if region.Height = 0 then 0 
+        else this.Index / region.Height 
 
       let items =
         this.Items

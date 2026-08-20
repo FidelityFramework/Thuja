@@ -2,7 +2,6 @@ namespace Thuja
 
 open System 
 open System.Collections
-open System.Collections.Generic
 
 // style
 type Color = 
@@ -29,7 +28,8 @@ type KeyInput =
   | Char of char | FKey of int
   | Up | Down | Left | Right 
   | Enter | Backspace | Delete 
-  | Tab | BackTab
+  | Tab | BackTab 
+  | Escape | Spacebar
 
 [<Flags>]
 type KeyModifiers =
@@ -81,8 +81,10 @@ module View =
     member this.Width = this.X2 - this.X1 + 1
     member this.Height = this.Y2 - this.Y1 + 1
     member this.Inner =
-      { X1 = this.X1 + 1; Y1 = this.Y1 + 1
-        X2 = this.X2 - 1; Y2 = this.Y2 - 1 }
+      if this.Width > 1 && this.Height > 1 then
+        { X1 = this.X1 + 1; Y1 = this.Y1 + 1
+          X2 = this.X2 - 1; Y2 = this.Y2 - 1 }
+      else Region.empty 
     static member create(x1, y1, x2, y2) : Region =
       { X1 = x1; Y1 = y1
         X2 = x2; Y2 = y2 }

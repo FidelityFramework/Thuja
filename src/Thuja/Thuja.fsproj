@@ -16,7 +16,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="icon.png" Pack="true" PackagePath="\"/>
+    <None Include="icon.png" Pack="true" PackagePath="\" />
     <None Include="..\..\README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 
@@ -24,7 +24,6 @@
     <Compile Include="Prelude.fs" />
     <Compile Include="Core.fs" />
     <Compile Include="Styles.fs" />
-    <Compile Include="Backend.fs" />
     <Compile Include="Elements\Helpers.fs" />
     <Compile Include="Elements\Empty.fs" />
     <Compile Include="Elements\Layout.fs" />
@@ -35,6 +34,7 @@
     <Compile Include="Elements\List.fs" />
     <Compile Include="Elements\Raw.fs" />
     <Compile Include="Elements\Table.fs" />
+    <Compile Include="Backend.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 

@@ -39,6 +39,8 @@ module private Mapper =
 
     let input =
       match keyInfo.Key with
+      | ConsoleKey.Spacebar -> Some Spacebar
+      | ConsoleKey.Escape -> Some Escape
       | ConsoleKey.Enter -> Some Enter
       | ConsoleKey.Backspace -> Some Backspace
       | ConsoleKey.Delete -> Some Delete
@@ -60,7 +62,6 @@ module private Mapper =
     else None
 
 open Thuja.View
-open Thuja.Styles
 
 module private Terminal =
   let beginSession() =
